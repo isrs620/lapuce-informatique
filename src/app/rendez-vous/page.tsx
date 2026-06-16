@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const deviceOptions = [
   "iPhone",
@@ -48,6 +48,11 @@ export default function RendezVousPage() {
     setLoading(true);
     setError("");
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        setError("La prise de rendez-vous en ligne n'est pas encore configurée. Veuillez nous appeler au (514) 382-0740 pour réserver.");
+        return;
+      }
+
       const { error: dbError } = await supabase.from("rendez_vous").insert([
         {
           nom: form.name,

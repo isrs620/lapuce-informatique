@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -17,6 +17,11 @@ export default function ContactPage() {
     setLoading(true);
     setError("");
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        setError("Le formulaire de contact en ligne n'est pas encore configuré. Veuillez nous appeler au (514) 382-0740.");
+        return;
+      }
+
       const { error: dbError } = await supabase.from("messages_contact").insert([
         {
           nom: form.name,
