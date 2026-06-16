@@ -9,33 +9,66 @@ const STATUT_LABELS: Record<string, { label: string; color: string }> = {
   annule:     { label: "Annulé",     color: "bg-red-100 text-red-600" },
 };
 
+async function loadAdminData() {
+  if (!supabase) {
+    return { rdvData: [], msgData: [] };
+  }
+
+  const [{ data: rdvData }, { data: msgData }] = await Promise.all([
+    supabase.from("rendez_vous").select("*").order("created_at", { ascending: false }),
+    supabase.from("messages_contact").select("*").order("created_at", { ascending: false }),
+  ]);
+
+  return { rdvData: rdvData ?? [], msgData: msgData ?? [] };
+}
+
 export default function AdminPage() {
   const [tab, setTab] = useState<"rdv" | "messages">("rdv");
   const [rdvs, setRdvs] = useState<RendezVous[]>([]);
   const [messages, setMessages] = useState<MessageContact[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(supabase));
+
+  async function fetchAll() {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    const { rdvData, msgData } = await loadAdminData();
+    setRdvs(rdvData);
+    setMessages(msgData);
+    setLoading(false);
+  }
 
   useEffect(() => {
-    fetchAll();
+    if (!supabase) return;
+
+    let cancelled = false;
+
+    void loadAdminData().then(({ rdvData, msgData }) => {
+      if (cancelled) return;
+
+      setRdvs(rdvData);
+      setMessages(msgData);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const fetchAll = async () => {
-    setLoading(true);
-    const [{ data: rdvData }, { data: msgData }] = await Promise.all([
-      supabase.from("rendez_vous").select("*").order("created_at", { ascending: false }),
-      supabase.from("messages_contact").select("*").order("created_at", { ascending: false }),
-    ]);
-    setRdvs(rdvData ?? []);
-    setMessages(msgData ?? []);
-    setLoading(false);
-  };
-
   const updateStatut = async (id: number, statut: string) => {
+    if (!supabase) return;
+
     await supabase.from("rendez_vous").update({ statut }).eq("id", id);
     setRdvs((prev) => prev.map((r) => (r.id === id ? { ...r, statut: statut as RendezVous["statut"] } : r)));
   };
 
   const marquerLu = async (id: number) => {
+    if (!supabase) return;
+
     await supabase.from("messages_contact").update({ lu: true }).eq("id", id);
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, lu: true } : m)));
   };
@@ -52,13 +85,23 @@ export default function AdminPage() {
             <h1 className="text-2xl font-extrabold">Tableau de bord — LaPuce Informatique</h1>
             <p className="text-sky-200 text-sm mt-0.5">Gestion des rendez-vous et messages</p>
           </div>
-          <button onClick={fetchAll} className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-sm font-medium transition-colors">
+          <button
+            onClick={fetchAll}
+            disabled={!supabase}
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 disabled:opacity-50 border border-white/20 rounded-xl text-sm font-medium transition-colors"
+          >
             ↻ Actualiser
           </button>
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        {!supabase && (
+          <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 px-5 py-4 text-sm text-orange-700">
+            Supabase n&apos;est pas configuré. Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY pour charger les rendez-vous et messages.
+          </div>
+        )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
@@ -100,7 +143,7 @@ export default function AdminPage() {
           /* ─── Rendez-vous ─── */
           <div className="space-y-4">
             {rdvs.length === 0 ? (
-              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun rendez-vous pour l'instant.</div>
+              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun rendez-vous pour l&apos;instant.</div>
             ) : rdvs.map((r) => (
               <div key={r.id} className={`bg-white border rounded-2xl p-5 shadow-sm ${r.statut === "nouveau" ? "border-sky-300" : "border-slate-200"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -118,7 +161,7 @@ export default function AdminPage() {
                       <span>✉️ {r.email}</span>
                     </div>
                     {r.message && (
-                      <p className="mt-2 text-sm text-slate-400 italic">"{r.message}"</p>
+                      <p className="mt-2 text-sm text-slate-400 italic">&quot;{r.message}&quot;</p>
                     )}
                     <p className="text-xs text-slate-300 mt-2">
                       Reçu le {r.created_at ? new Date(r.created_at).toLocaleString("fr-CA") : "—"}
@@ -147,7 +190,7 @@ export default function AdminPage() {
           /* ─── Messages contact ─── */
           <div className="space-y-4">
             {messages.length === 0 ? (
-              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun message pour l'instant.</div>
+              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun message pour l&apos;instant.</div>
             ) : messages.map((m) => (
               <div key={m.id} className={`bg-white border rounded-2xl p-5 shadow-sm ${!m.lu ? "border-sky-300" : "border-slate-200"}`}>
                 <div className="flex items-start justify-between gap-4">

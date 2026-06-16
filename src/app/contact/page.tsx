@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
@@ -17,6 +17,11 @@ export default function ContactPage() {
     setLoading(true);
     setError("");
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        setError("Le formulaire de contact en ligne n'est pas encore configuré. Veuillez nous appeler au (514) 382-0740.");
+        return;
+      }
+
       const { error: dbError } = await supabase.from("messages_contact").insert([
         {
           nom: form.name,
@@ -103,7 +108,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-slate-900 font-semibold mb-1">Heures d'ouverture</h3>
+                  <h3 className="text-slate-900 font-semibold mb-1">Heures d&apos;ouverture</h3>
                   <div className="text-slate-500 text-sm space-y-0.5">
                     <p>Lundi – Vendredi : 9h00 – 19h00</p>
                     <p>Samedi : 10h00 – 17h00</p>
@@ -128,7 +133,7 @@ export default function ContactPage() {
             </div>
 
             <div className="mt-6 p-5 bg-sky-50 border border-sky-200 rounded-xl">
-              <p className="text-sky-600 font-semibold text-sm mb-1">Besoin d'une réparation rapide ?</p>
+              <p className="text-sky-600 font-semibold text-sm mb-1">Besoin d&apos;une réparation rapide ?</p>
               <p className="text-slate-500 text-sm mb-4">Réservez directement en ligne pour un créneau le jour même ou le lendemain.</p>
               <Link
                 href="/rendez-vous"
@@ -200,7 +205,7 @@ export default function ContactPage() {
                     required
                   >
                     <option value="">Sélectionnez un sujet</option>
-                    <option>Demande d'information sur une réparation</option>
+                    <option>Demande d&apos;information sur une réparation</option>
                     <option>Question sur un devis</option>
                     <option>Suivi de réparation</option>
                     <option>Problème avec une réparation effectuée</option>

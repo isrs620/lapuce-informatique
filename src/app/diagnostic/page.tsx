@@ -89,7 +89,7 @@ export default function DiagnosticPage() {
             Diagnostic <span className="text-sky-100">gratuit</span>
           </h1>
           <p className="text-sky-100 text-lg max-w-2xl mx-auto mb-10">
-            Vous ne savez pas ce qui ne va pas avec votre appareil ? Amenez-le chez nous. Nos techniciens l'analysent gratuitement et vous remettent un rapport complet avec un devis transparent.
+            Vous ne savez pas ce qui ne va pas avec votre appareil ? Amenez-le chez nous. Nos techniciens l&apos;analysent gratuitement et vous remettent un rapport complet avec un devis transparent.
           </p>
           <Link
             href="/rendez-vous"
@@ -149,7 +149,7 @@ export default function DiagnosticPage() {
               Problèmes fréquemment diagnostiqués
             </h2>
             <p className="text-slate-500 mb-8">
-              Nos techniciens diagnostiquent et réparent des centaines d'appareils chaque mois. Voici les problèmes les plus courants que nous traitons.
+              Nos techniciens diagnostiquent et réparent des centaines d&apos;appareils chaque mois. Voici les problèmes les plus courants que nous traitons.
             </p>
             <div className="space-y-3">
               {commonIssues.map((issue) => (
@@ -163,9 +163,9 @@ export default function DiagnosticPage() {
             </div>
           </div>
           <div className="bg-gradient-to-br from-sky-500 to-blue-600 rounded-2xl p-8 text-white shadow-xl shadow-sky-200">
-            <h3 className="font-bold text-xl mb-2">Le diagnostic, c'est gratuit</h3>
+            <h3 className="font-bold text-xl mb-2">Le diagnostic, c&apos;est gratuit</h3>
             <p className="text-sky-100 text-sm mb-6">
-              Aucun frais, aucune obligation. Nous analysons votre appareil et vous donnons un devis clair. Vous êtes libre d'accepter ou non la réparation.
+              Aucun frais, aucune obligation. Nous analysons votre appareil et vous donnons un devis clair. Vous êtes libre d&apos;accepter ou non la réparation.
             </p>
             <ul className="space-y-3 mb-8">
               {[

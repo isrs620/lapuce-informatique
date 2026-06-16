@@ -111,7 +111,7 @@ export default async function ModelPage({ params }: Props) {
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sky-600 font-bold text-sm">{repair.price}</p>
-                  <p className="text-slate-400 text-xs">Pièces et main-d'œuvre</p>
+                  <p className="text-slate-400 text-xs">Pièces et main-d&apos;œuvre</p>
                   <p className="text-slate-400 text-xs">incluses</p>
                 </div>
               </div>

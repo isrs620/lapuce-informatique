@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
+import Link from "next/link";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 
 const deviceOptions = [
   "iPhone",
@@ -48,6 +49,11 @@ export default function RendezVousPage() {
     setLoading(true);
     setError("");
     try {
+      if (!isSupabaseConfigured || !supabase) {
+        setError("La prise de rendez-vous en ligne n'est pas encore configurée. Veuillez nous appeler au (514) 382-0740 pour réserver.");
+        return;
+      }
+
       const { error: dbError } = await supabase.from("rendez_vous").insert([
         {
           nom: form.name,
@@ -90,12 +96,12 @@ export default function RendezVousPage() {
             Merci <span className="text-slate-800 font-medium">{form.name}</span> ! Votre rendez-vous pour le <strong className="text-sky-600">{form.date}</strong> à <strong className="text-sky-600">{form.time}</strong> est bien enregistré.
           </p>
           <p className="text-slate-400 text-sm mb-8">Vous recevrez une confirmation par courriel à <span className="text-slate-600">{form.email}</span>.</p>
-          <a
+          <Link
             href="/"
             className="inline-block px-6 py-3 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-xl transition-colors"
           >
-            Retour à l'accueil
-          </a>
+            Retour à l&apos;accueil
+          </Link>
         </div>
       </div>
     );
@@ -149,7 +155,7 @@ export default function RendezVousPage() {
               <h2 className="text-xl font-bold text-slate-900">Votre appareil</h2>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Type d'appareil *</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Type d&apos;appareil *</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {deviceOptions.map((d) => (
                     <button
