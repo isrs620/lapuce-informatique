@@ -100,7 +100,7 @@ export default function HomePage() {
             <span className="text-sky-100">Saint-Laurent, Montréal</span>
           </h1>
           <p className="text-sky-100 text-lg sm:text-xl max-w-2xl mx-auto mb-10">
-            Spécialiste en réparation d'iPhone, Samsung, iPad, MacBook, Apple Watch et consoles PS5/Xbox à Saint-Laurent. Diagnostic gratuit, devis transparent, garantie 90 jours.
+            Spécialiste en réparation d&apos;iPhone, Samsung, iPad, MacBook, Apple Watch et consoles PS5/Xbox à Saint-Laurent. Diagnostic gratuit, devis transparent, garantie 90 jours.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link

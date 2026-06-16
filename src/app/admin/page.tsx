@@ -15,11 +15,7 @@ export default function AdminPage() {
   const [messages, setMessages] = useState<MessageContact[]>([]);
   const [loading, setLoading] = useState(Boolean(supabase));
 
-  useEffect(() => {
-    fetchAll();
-  }, []);
-
-  const fetchAll = async () => {
+  async function fetchAll() {
     if (!supabase) {
       setLoading(false);
       return;
@@ -33,7 +29,11 @@ export default function AdminPage() {
     setRdvs(rdvData ?? []);
     setMessages(msgData ?? []);
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
   const updateStatut = async (id: number, statut: string) => {
     if (!supabase) return;
@@ -74,7 +74,7 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         {!supabase && (
           <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 px-5 py-4 text-sm text-orange-700">
-            Supabase n'est pas configuré. Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY pour charger les rendez-vous et messages.
+            Supabase n&apos;est pas configuré. Ajoutez NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY pour charger les rendez-vous et messages.
           </div>
         )}
 
@@ -119,7 +119,7 @@ export default function AdminPage() {
           /* ─── Rendez-vous ─── */
           <div className="space-y-4">
             {rdvs.length === 0 ? (
-              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun rendez-vous pour l'instant.</div>
+              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun rendez-vous pour l&apos;instant.</div>
             ) : rdvs.map((r) => (
               <div key={r.id} className={`bg-white border rounded-2xl p-5 shadow-sm ${r.statut === "nouveau" ? "border-sky-300" : "border-slate-200"}`}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
@@ -137,7 +137,7 @@ export default function AdminPage() {
                       <span>✉️ {r.email}</span>
                     </div>
                     {r.message && (
-                      <p className="mt-2 text-sm text-slate-400 italic">"{r.message}"</p>
+                      <p className="mt-2 text-sm text-slate-400 italic">&quot;{r.message}&quot;</p>
                     )}
                     <p className="text-xs text-slate-300 mt-2">
                       Reçu le {r.created_at ? new Date(r.created_at).toLocaleString("fr-CA") : "—"}
@@ -166,7 +166,7 @@ export default function AdminPage() {
           /* ─── Messages contact ─── */
           <div className="space-y-4">
             {messages.length === 0 ? (
-              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun message pour l'instant.</div>
+              <div className="text-center py-20 text-slate-400 bg-white rounded-2xl border border-slate-200">Aucun message pour l&apos;instant.</div>
             ) : messages.map((m) => (
               <div key={m.id} className={`bg-white border rounded-2xl p-5 shadow-sm ${!m.lu ? "border-sky-300" : "border-slate-200"}`}>
                 <div className="flex items-start justify-between gap-4">

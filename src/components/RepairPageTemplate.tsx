@@ -135,7 +135,7 @@ export default function RepairPageTemplate({
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="bg-gradient-to-br from-sky-500 to-blue-600 rounded-3xl p-10 shadow-xl shadow-sky-200">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
-            Besoin d'une réparation {device} ?
+            Besoin d&apos;une réparation {device} ?
           </h2>
           <p className="text-sky-100 mb-8 max-w-lg mx-auto">
             Réservez un créneau dès maintenant. Notre équipe prend en charge votre appareil le jour même.
