@@ -9,6 +9,19 @@ const STATUT_LABELS: Record<string, { label: string; color: string }> = {
   annule:     { label: "Annulé",     color: "bg-red-100 text-red-600" },
 };
 
+async function loadAdminData() {
+  if (!supabase) {
+    return { rdvData: [], msgData: [] };
+  }
+
+  const [{ data: rdvData }, { data: msgData }] = await Promise.all([
+    supabase.from("rendez_vous").select("*").order("created_at", { ascending: false }),
+    supabase.from("messages_contact").select("*").order("created_at", { ascending: false }),
+  ]);
+
+  return { rdvData: rdvData ?? [], msgData: msgData ?? [] };
+}
+
 export default function AdminPage() {
   const [tab, setTab] = useState<"rdv" | "messages">("rdv");
   const [rdvs, setRdvs] = useState<RendezVous[]>([]);
@@ -22,17 +35,28 @@ export default function AdminPage() {
     }
 
     setLoading(true);
-    const [{ data: rdvData }, { data: msgData }] = await Promise.all([
-      supabase.from("rendez_vous").select("*").order("created_at", { ascending: false }),
-      supabase.from("messages_contact").select("*").order("created_at", { ascending: false }),
-    ]);
-    setRdvs(rdvData ?? []);
-    setMessages(msgData ?? []);
+    const { rdvData, msgData } = await loadAdminData();
+    setRdvs(rdvData);
+    setMessages(msgData);
     setLoading(false);
   }
 
   useEffect(() => {
-    fetchAll();
+    if (!supabase) return;
+
+    let cancelled = false;
+
+    void loadAdminData().then(({ rdvData, msgData }) => {
+      if (cancelled) return;
+
+      setRdvs(rdvData);
+      setMessages(msgData);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const updateStatut = async (id: number, statut: string) => {
