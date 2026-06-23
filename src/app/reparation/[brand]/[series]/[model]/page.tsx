@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getBrand, getSeries, getModel, getRepairs } from "@/data/devices";
 import DeviceImage from "@/components/DeviceImage";
+import ProduitsDisponibles from "@/components/ProduitsDisponibles";
+import { produitsAvecMiseEnAvant } from "@/lib/products-public";
 
 interface Props {
   params: Promise<{ brand: string; series: string; model: string }>;
@@ -25,6 +27,11 @@ export default async function ModelPage({ params }: Props) {
   if (!brand || !series || !model) notFound();
 
   const repairs = getRepairs(brandId);
+  const { produits, misEnAvant } = await produitsAvecMiseEnAvant({
+    brandId,
+    modelId,
+    modelName: model.name,
+  });
 
   // Nearby models for navigation
   const currentIndex = series.models.findIndex((m) => m.id === modelId);
@@ -68,7 +75,7 @@ export default async function ModelPage({ params }: Props) {
               {model.modelNumber && (
                 <p className="text-sky-200 text-sm mt-1">Modèle : {model.modelNumber}</p>
               )}
-              <div className="flex items-center gap-3 mt-3">
+              <div className="flex flex-wrap items-center gap-3 mt-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 border border-white/20 rounded-full text-white text-sm">
                   <span className="w-2 h-2 bg-green-400 rounded-full" />
                   Diagnostic gratuit inclus
@@ -95,46 +102,46 @@ export default async function ModelPage({ params }: Props) {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {repairs.map((repair) => (
-            <div
+            <Link
               key={repair.id}
-              className="bg-white border border-sky-100 hover:border-sky-300 hover:shadow-md hover:shadow-sky-50 rounded-xl p-5 transition-all"
+              href={`/reparation/${brandId}/${seriesId}/${modelId}/${repair.id}`}
+              className="group bg-white border border-sky-100 hover:border-sky-400 hover:shadow-lg hover:shadow-sky-100 rounded-2xl p-5 transition-all flex flex-col"
             >
               <div className="flex justify-between items-start mb-3">
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{repair.icon}</span>
                   <div>
-                    <h3 className="text-slate-900 font-bold text-sm">{repair.name}</h3>
+                    <h3 className="text-slate-900 font-bold text-sm group-hover:text-sky-600 transition-colors">{repair.name}</h3>
                     <span className="inline-block px-2 py-0.5 bg-sky-100 text-sky-600 text-xs rounded-full mt-0.5">
-                      Précommande
+                      En stock
                     </span>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-sky-600 font-bold text-sm">{repair.price}</p>
-                  <p className="text-slate-400 text-xs">Pièces et main-d'œuvre</p>
-                  <p className="text-slate-400 text-xs">incluses</p>
+                  <p className="text-slate-400 text-xs">Main-d'œuvre incluse</p>
                 </div>
               </div>
 
-              <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-2">
+              <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-2 flex-1">
                 {repair.description}
               </p>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1 text-slate-400 text-xs">
-                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {repair.duration}
+              <div className="flex items-center justify-between mt-auto">
+                <div className="flex items-center gap-3 text-slate-400 text-xs">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {repair.duration}
+                  </span>
+                  <span className="flex items-center gap-1">🛡️ {repair.guarantee}</span>
                 </div>
-                <Link
-                  href={`/rendez-vous?device=${encodeURIComponent(model.name)}&repair=${encodeURIComponent(repair.name)}`}
-                  className="px-4 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm"
-                >
-                  Réservez
-                </Link>
+                <span className="px-4 py-1.5 bg-sky-500 group-hover:bg-sky-600 text-white text-xs font-semibold rounded-lg transition-colors shadow-sm">
+                  Voir →
+                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
@@ -142,6 +149,13 @@ export default async function ModelPage({ params }: Props) {
           * Les prix sont indicatifs. Un diagnostic gratuit confirmera le devis exact.
         </p>
       </section>
+
+      <ProduitsDisponibles
+        produits={produits}
+        misEnAvant={misEnAvant}
+        titre="Produits disponibles"
+        sousTitre="Tous les produits au même endroit — pièces pour cet appareil en premier, puis le reste de la boutique."
+      />
 
       {/* Model navigation */}
       <section className="py-6 bg-sky-50">

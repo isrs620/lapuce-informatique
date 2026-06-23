@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getBrand } from "@/data/devices";
 import DeviceImage from "@/components/DeviceImage";
+import ProduitsDisponibles from "@/components/ProduitsDisponibles";
+import { produitsAvecMiseEnAvant } from "@/lib/products-public";
 
 interface Props {
   params: Promise<{ brand: string }>;
@@ -21,6 +23,8 @@ export default async function BrandPage({ params }: Props) {
   const { brand: brandId } = await params;
   const brand = getBrand(brandId);
   if (!brand) notFound();
+
+  const { produits, misEnAvant } = await produitsAvecMiseEnAvant({ brandId });
 
   return (
     <>
@@ -83,6 +87,12 @@ export default async function BrandPage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      <ProduitsDisponibles
+        produits={produits}
+        misEnAvant={misEnAvant}
+        sousTitre="Tous nos produits ici — iPhone, Samsung, MacBook et plus. Les articles pour cette marque sont en premier."
+      />
 
       {/* CTA */}
       <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

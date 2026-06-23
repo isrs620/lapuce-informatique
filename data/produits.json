@@ -1,0 +1,20 @@
+[
+  {
+    "id": "9721d03f-6af7-4c52-8ed6-a75a7366f46c",
+    "created_at": "2026-06-23T19:02:16.867Z",
+    "updated_at": "2026-06-23T19:02:16.867Z",
+    "nom": "iphone18 pro",
+    "marque": "iphone",
+    "modele": "18",
+    "prix": 0,
+    "prix_promo": null,
+    "promotion_active": false,
+    "reduction_pct": null,
+    "description": "boooome",
+    "categorie": "Téléphone",
+    "stock": 1,
+    "publie": true,
+    "photo_principale": "/uploads/produits/1782241335887-hnwsix.jpg",
+    "produit_photos": []
+  }
+]

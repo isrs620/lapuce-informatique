@@ -1,0 +1,12 @@
+{
+  "iphone": {},
+  "samsung": {
+    "ecran": {
+      "eco": 80
+    }
+  },
+  "ipad": {},
+  "macbook": {},
+  "apple-watch": {},
+  "consoles": {}
+}
